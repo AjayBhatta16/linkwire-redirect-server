@@ -14,5 +14,6 @@ app.use(bodyParser.json())
 
 require('./functions/health-check')(app);
 require('./functions/legacy-ui-redirects')(app);
+require('./functions/redirect-endpoint')(app);
 
 app.listen(process.env.PORT || 5001)
