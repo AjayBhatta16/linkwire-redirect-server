@@ -1,6 +1,8 @@
 const DataEditor = require('../services/data-editor');
 const requestIp = require('request-ip')
 
+const { PubSub } = require('@google-cloud/pubsub');
+
 const dataEditor = new DataEditor();
 
 module.exports = app => {
@@ -24,7 +26,7 @@ module.exports = app => {
             userAgent,
         };
 
-        // TODO: submit to post-click pubsub topic
+        await publishJsonMessage('post-click-topic', postClickRequest);
 
         console.log("rendering redirect page...");
 
@@ -35,4 +37,14 @@ module.exports = app => {
             bannerURL: link.siteBannerURL,
         });
     });
+}
+
+async function publishJsonMessage(topicName, jsonData) {
+  const pubsub = new PubSub();
+
+  const messageId = await pubsub.topic(topicName).publish(
+    Buffer.from(JSON.stringify(jsonData))
+  );
+
+  console.log(`Message ${messageId} published`);
 }
