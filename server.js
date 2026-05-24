@@ -12,4 +12,7 @@ app.use(express.static(__dirname + '/public'))
 app.set('view engine','ejs')
 app.use(bodyParser.json())
 
+require('./functions/health-check')(app);
+require('./functions/legacy-ui-redirects')(app);
+
 app.listen(process.env.PORT || 5001)
