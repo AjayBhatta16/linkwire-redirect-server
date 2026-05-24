@@ -1,0 +1,28 @@
+{
+  "name": "linkwire-redirect-server",
+  "version": "1.0.0",
+  "description": "The code for LinkWire's app engine, which will eventually become an isolated worker for processing redirects.",
+  "homepage": "https://github.com/AjayBhatta16/linkwire-redirect-server#readme",
+  "bugs": {
+    "url": "https://github.com/AjayBhatta16/linkwire-redirect-server/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AjayBhatta16/linkwire-redirect-server.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "ejs": "^3.1.8",
+    "express": "^4.18.1",
+    "firebase-admin": "^13.1.0",
+    "request-ip": "^2.1.3"
+  }
+}
