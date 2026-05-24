@@ -18,6 +18,11 @@ module.exports = app => {
 
         console.log(`getting user record for link owner: ${link.createdBy}...`);
 
+        let user = await dataEditor.getUser(link.createdBy);
+        console.log(user);
+
+        console.log('extracting user agent and client IP address...');
+
         let userAgent = req.get('User-Agent');
 
         let postClickRequest = {
@@ -25,6 +30,8 @@ module.exports = app => {
             ipAddress: requestIp.getClientIp(req),
             userAgent,
         };
+
+        console.log('publishing click data to pub/sub...');
 
         await publishJsonMessage('post-click-topic', postClickRequest);
 
