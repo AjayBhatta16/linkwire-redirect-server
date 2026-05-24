@@ -7,7 +7,10 @@ const path = require('path')
 const firebaseAdmin = require("firebase-admin")
 const { initializeApp } = require("firebase-admin/app")
 
-const resolvedDbKeyFilePath = path.resolve(__dirname, "secrets/serviceAccountKey.json")
+const resolvedDbKeyFilePath = path.resolve(
+    __dirname.split('/services')[0].split('\\services')[0], 
+    "secrets/serviceAccountKey.json"
+);
 
 const firestoreServiceAccountKey = require(resolvedDbKeyFilePath);
 
