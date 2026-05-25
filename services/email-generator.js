@@ -1,6 +1,6 @@
 function generateEmailBody(linkID, ipAddress, userAgent) {
     return `
-        <h6>Your link with ID ${linkID} was just clicked.</h6>
+        <h2>Your link with ID ${linkID} was just clicked.</h2>
         <hr/>
         <p>Here are the details:</p>
         <ul>
