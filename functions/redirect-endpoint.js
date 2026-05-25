@@ -24,10 +24,13 @@ module.exports = app => {
         console.log('extracting user agent and client IP address...');
 
         let userAgent = req.get('User-Agent');
+        let ipAddress = requestIp.getClientIp(req);
+
+        console.log('IP Address extracted:', ipAddress);
 
         let postClickRequest = {
             linkID: req.params.id,
-            ipAddress: requestIp.getClientIp(req),
+            ipAddress,
             userAgent,
         };
 
