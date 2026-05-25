@@ -1,3 +1,5 @@
 module.exports = app => {
-    app.get('/health-check', (_, res) => res.status(200).message('The App is Running'))
+    app.get('/_ah/health', (_, res) => res.status(200).send('ok'));
+    app.get('/_ah/start', (_, res) => res.status(200).send('ok'));
+    app.get('/_ah/stop', (_, res) => res.status(200).send('ok'));
 }
