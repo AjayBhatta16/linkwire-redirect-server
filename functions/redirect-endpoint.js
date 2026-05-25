@@ -30,7 +30,7 @@ module.exports = app => {
         console.log('extracting user agent and client IP address...');
 
         let userAgent = req.get('User-Agent');
-        let ipAddress = requestIp.getClientIp(req);
+        let ipAddress = req.headers['cf-connecting-ip'] ?? requestIp.getClientIp(req);
 
         console.log('IP Address extracted:', ipAddress);
 
