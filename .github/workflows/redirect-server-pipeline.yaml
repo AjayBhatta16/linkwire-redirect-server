@@ -1,0 +1,30 @@
+name: Deploy Redirect Server to App Engine
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+   
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Download Firebase Account Key
+      run: |
+        mkdir -p secrets
+        echo "$AUTH_KEY" > secrets/serviceAccountKey.json
+      env:
+        AUTH_KEY: ${{ secrets.FIRESTORE_AUTH_KEY }}
+
+    - name: Deploy to App Engine
+      uses: google-github-actions/deploy-appengine@v0.2.0
+      with:
+        deliverables: app.yaml
+        version: ${{ github.sha }}
+        project_id: linkwire-urls
+        credentials: ${{ secrets.GCP_AE_DEPLOYMENT_KEY }}
+        flags: '--verbosity=debug'
