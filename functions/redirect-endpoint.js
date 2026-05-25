@@ -7,6 +7,12 @@ const dataEditor = new DataEditor();
 
 module.exports = app => {
     app.get('/:id', async (req, res) => {
+        console.log('path:', req.path);
+        console.log('params:', req.params);
+        console.log('all headers:', JSON.stringify(req.headers, null, 2));
+        console.log('remoteAddress:', req.socket.remoteAddress);
+        console.log('clientIp:', requestIp.getClientIp(req));
+
         console.log("getting link record by redirect ID...");
 
         if (req.params.id.length !== 6) {
