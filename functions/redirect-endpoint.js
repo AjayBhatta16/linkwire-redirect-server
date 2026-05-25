@@ -1,10 +1,42 @@
 const DataEditor = require('../services/data-editor');
 const { generateEmailBody } = require('../services/email-generator');
+
 const requestIp = require('request-ip')
+const { Subject } = require('rxjs');
 
 const { PubSub } = require('@google-cloud/pubsub');
 
 const dataEditor = new DataEditor();
+
+const clickSubject = new Subject();
+const clicks$ = clickSubject.asObservable();
+
+clicks$.subscribe(async ({ link, ipAddress, userAgent }) => {
+    console.log(`getting user record for link owner: ${link.createdBy}...`);
+
+    let user = await dataEditor.getUser(link.createdBy);
+    console.log(user);
+
+    console.log('publishing click data to pub/sub...');
+
+    let postClickRequest = {
+        linkID: link.displayID,
+        ipAddress,
+        userAgent,
+    };
+
+    await publishJsonMessage('post-click-topic', postClickRequest);
+
+    console.log('sending email notification to link owner...');
+
+    let emailRequest = {
+        to: user.email,
+        subject: `Your link was clicked!`,
+        body: generateEmailBody(link.displayID, ipAddress, userAgent),
+    }
+
+    await publishJsonMessage('send-email-topic', emailRequest);
+});
 
 module.exports = app => {
     app.get('/:id', async (req, res) => {
@@ -23,11 +55,6 @@ module.exports = app => {
         let link = await dataEditor.getLinkByDisplayID(req.params.id);
         console.log(link);
 
-        console.log(`getting user record for link owner: ${link.createdBy}...`);
-
-        let user = await dataEditor.getUser(link.createdBy);
-        console.log(user);
-
         console.log('extracting user agent and client IP address...');
 
         let userAgent = req.get('User-Agent');
@@ -35,25 +62,7 @@ module.exports = app => {
 
         console.log('IP Address extracted:', ipAddress);
 
-        console.log('publishing click data to pub/sub...');
-
-        let postClickRequest = {
-            linkID: req.params.id,
-            ipAddress,
-            userAgent,
-        };
-
-        await publishJsonMessage('post-click-topic', postClickRequest);
-
-        console.log('sending email notification to link owner...');
-
-        let emailRequest = {
-            to: user.email,
-            subject: `Your link was clicked!`,
-            body: generateEmailBody(req.params.id, ipAddress, userAgent),
-        }
-
-        await publishJsonMessage('send-email-topic', emailRequest);
+        clickSubject.next({ link, ipAddress, userAgent });
 
         console.log("rendering redirect page...");
 
