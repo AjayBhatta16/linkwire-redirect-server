@@ -1,4 +1,5 @@
 const DataEditor = require('../services/data-editor');
+const { generateEmailBody } = require('../services/email-generator');
 const requestIp = require('request-ip')
 
 const { PubSub } = require('@google-cloud/pubsub');
@@ -34,15 +35,25 @@ module.exports = app => {
 
         console.log('IP Address extracted:', ipAddress);
 
+        console.log('publishing click data to pub/sub...');
+
         let postClickRequest = {
             linkID: req.params.id,
             ipAddress,
             userAgent,
         };
 
-        console.log('publishing click data to pub/sub...');
-
         await publishJsonMessage('post-click-topic', postClickRequest);
+
+        console.log('sending email notification to link owner...');
+
+        let emailRequest = {
+            to: user.email,
+            subject: `Your link was clicked!`,
+            body: generateEmailBody(req.params.id, ipAddress, userAgent),
+        }
+
+        await publishJsonMessage('send-email-topic', emailRequest);
 
         console.log("rendering redirect page...");
 
